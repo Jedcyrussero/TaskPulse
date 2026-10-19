@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Manage your tasks in TaskPulse.">
+  <title>Tasks · TaskPulse</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="/index.html">
+      <span class="brand-mark" aria-hidden="true">⚡</span>
+      TaskPulse
+    </a>
+    <nav class="nav" id="nav">
+      <a href="/index.html">Dashboard</a>
+      <a href="/tasks.html">Tasks</a>
+    </nav>
+    <div id="user-slot" style="display:flex;align-items:center;gap:10px"></div>
+  </header>
+
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1>Tasks</h1>
+        <p>Filter, sort and manage everything on your plate.</p>
+      </div>
+      <button class="btn btn-primary" type="button" id="new-task">+ New task</button>
+    </div>
+
+    <section class="card">
+      <div class="toolbar">
+        <div class="grow">
+          <label class="visually-hidden" for="search">Search tasks</label>
+          <input type="search" id="search" placeholder="Search titles and descriptions…">
+        </div>
+
+        <label class="visually-hidden" for="filter-status">Filter by status</label>
+        <select id="filter-status">
+          <option value="">All statuses</option>
+          <option value="todo">To do</option>
+          <option value="in_progress">In progress</option>
+          <option value="done">Done</option>
+        </select>
+
+        <label class="visually-hidden" for="filter-priority">Filter by priority</label>
+        <select id="filter-priority">
+          <option value="">All priorities</option>
+          <option value="urgent">Urgent</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+
+        <label class="visually-hidden" for="filter-due">Filter by due date</label>
+        <select id="filter-due">
+          <option value="">Any due date</option>
+          <option value="overdue">Overdue</option>
+          <option value="today">Due today</option>
+          <option value="week">Due this week</option>
+          <option value="none">No due date</option>
+        </select>
+
+        <button class="btn" type="button" id="sort" data-direction="desc" title="Toggle sort direction">
+          Newest
+        </button>
+
+        <button class="btn btn-ghost" type="button" id="clear-filters">Clear</button>
+      </div>
+
+      <div id="list-alert" class="alert" style="margin:0 20px"></div>
+
+      <ul class="task-list" id="task-list" aria-live="polite"></ul>
+
+      <div class="pagination">
+        <span id="list-summary"></span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="page-info"></span>
+          <button class="btn btn-sm" type="button" id="prev-page">Previous</button>
+          <button class="btn btn-sm" type="button" id="next-page">Next</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Create / edit modal -->
+  <div class="modal-backdrop" id="task-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="modal-title">New task</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Close">✕</button>
+      </div>
+      <form id="task-form">
+        <div class="modal-body">
+          <div id="modal-alert" class="alert"></div>
+
+          <div class="field">
+            <label for="f-title">Title</label>
+            <input type="text" id="f-title" name="title" required maxlength="200" placeholder="What needs doing?">
+          </div>
+
+          <div class="field">
+            <label for="f-desc">Description</label>
+            <textarea id="f-desc" name="description" maxlength="2000" placeholder="Optional details…"></textarea>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="f-status">Status</label>
+              <select id="f-status" name="status">
+                <option value="todo">To do</option>
+                <option value="in_progress">In progress</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="f-priority">Priority</label>
+              <select id="f-priority" name="priority">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="f-due">Due date</label>
+            <input type="date" id="f-due" name="dueDate">
+          </div>
+        </div>
+
+        <div class="modal-foot">
+          <button class="btn" type="button" data-close>Cancel</button>
+          <button class="btn btn-primary" type="submit" id="modal-submit">Create task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/js/tasks.js"></script>
+</body>
+</html>

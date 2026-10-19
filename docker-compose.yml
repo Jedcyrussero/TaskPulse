@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: taskpulse-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: taskpulse
+      POSTGRES_PASSWORD: taskpulse
+      POSTGRES_DB: taskpulse
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      # Runs exactly once, on first boot of an empty volume.
+      - ./server/db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskpulse -d taskpulse"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  api:
+    image: node:24-alpine
+    container_name: taskpulse-api
+    working_dir: /app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Inside the compose network the DB hostname is the service name.
+      DATABASE_URL: postgres://taskpulse:taskpulse@db:5432/taskpulse
+      PGSSL: "false"
+    volumes:
+      - ./:/app
+      - api-node-modules:/app/node_modules
+    command: sh -c "npm install --omit=dev --no-audit --no-fund && node server/index.js"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+
+volumes:
+  db-data:
+  api-node-modules:

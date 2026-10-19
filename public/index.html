@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="TaskPulse - track your tasks with a weather-aware dashboard.">
+  <title>Dashboard · TaskPulse</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="/index.html">
+      <span class="brand-mark" aria-hidden="true">⚡</span>
+      TaskPulse
+    </a>
+    <nav class="nav" id="nav">
+      <a href="/index.html">Dashboard</a>
+      <a href="/tasks.html">Tasks</a>
+    </nav>
+    <div id="user-slot" style="display:flex;align-items:center;gap:10px"></div>
+  </header>
+
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1 id="greeting">Welcome back</h1>
+        <p>Here's what your workload looks like right now.</p>
+      </div>
+      <button class="btn" type="button" id="refresh-btn">Refresh</button>
+    </div>
+
+    <div class="grid" style="gap:18px">
+      <section class="grid grid-stats" id="stat-grid" aria-label="Summary statistics"></section>
+
+      <div class="grid grid-2">
+        <div style="display:grid;gap:18px">
+          <section class="card">
+            <div class="card-head">
+              <h2>Activity</h2>
+              <div class="legend">
+                <span class="legend-item">
+                  <span class="legend-dot" style="background:var(--primary)"></span> Created
+                </span>
+                <span class="legend-item">
+                  <span class="legend-dot" style="background:var(--success)"></span> Completed
+                </span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart" id="chart"></div>
+              <div class="chart-labels" id="chart-labels"></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-head">
+              <h2>Due next</h2>
+              <a href="/tasks.html" style="font-size:.85rem">View all →</a>
+            </div>
+            <ul class="task-list" id="upcoming-list"></ul>
+          </section>
+        </div>
+
+        <div style="display:grid;gap:18px">
+          <section id="weather" class="card" aria-label="Local weather"></section>
+
+          <section class="card">
+            <div class="card-head"><h2>Completion</h2></div>
+            <div class="card-body">
+              <div style="display:flex;justify-content:space-between;font-size:.88rem;margin-bottom:8px">
+                <span style="color:var(--text-muted)">Overall progress</span>
+                <span id="progress-text" style="font-weight:600"></span>
+              </div>
+              <div class="progress"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-head"><h2>Open by priority</h2></div>
+            <div class="card-body" id="priority-bars"></div>
+          </section>
+
+          <section class="card">
+            <div class="card-head"><h2>Recently completed</h2></div>
+            <ul class="task-list" id="activity-list"></ul>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="/js/dashboard.js"></script>
+</body>
+</html>

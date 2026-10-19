@@ -1,0 +1,259 @@
+[db] connection failure: ECONNREFUSED
+[error] GET /api/health AggregateError [ECONNREFUSED]: 
+    at C:\Users\PC\Desktop\TaskPulse\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/routes/index.js:37:3 {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[db] connection failure: ECONNREFUSED
+[error] POST /api/auth/register AggregateError [ECONNREFUSED]: 
+    at C:\Users\PC\Desktop\TaskPulse\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Module.findUserByEmail (file:///C:/Users/PC/Desktop/TaskPulse/server/services/auth.service.js:8:20)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/auth.controller.js:14:7 {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[db] connection failure: ECONNREFUSED
+[error] POST /api/auth/login AggregateError [ECONNREFUSED]: 
+    at C:\Users\PC\Desktop\TaskPulse\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Module.findUserByEmail (file:///C:/Users/PC/Desktop/TaskPulse/server/services/auth.service.js:8:20)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/auth.controller.js:29:18 {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[db] connection failure: ECONNREFUSED
+[error] POST /api/auth/login AggregateError [ECONNREFUSED]: 
+    at C:\Users\PC\Desktop\TaskPulse\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Module.findUserByEmail (file:///C:/Users/PC/Desktop/TaskPulse/server/services/auth.service.js:8:20)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/auth.controller.js:29:18 {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[db] connection failure: ECONNREFUSED
+[error] POST /api/auth/login AggregateError [ECONNREFUSED]: 
+    at C:\Users\PC\Desktop\TaskPulse\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Module.findUserByEmail (file:///C:/Users/PC/Desktop/TaskPulse/server/services/auth.service.js:8:20)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/auth.controller.js:29:18 {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[db] connection failure: ECONNREFUSED
+[error] POST /api/auth/login AggregateError [ECONNREFUSED]: 
+    at C:\Users\PC\Desktop\TaskPulse\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Module.findUserByEmail (file:///C:/Users/PC/Desktop/TaskPulse/server/services/auth.service.js:8:20)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/auth.controller.js:29:18 {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[db] connection failure: ECONNREFUSED
+[error] POST /api/auth/login AggregateError [ECONNREFUSED]: 
+    at C:\Users\PC\Desktop\TaskPulse\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Module.findUserByEmail (file:///C:/Users/PC/Desktop/TaskPulse/server/services/auth.service.js:8:20)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/auth.controller.js:29:18 {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at createConnectionError (node:net:2124:14)
+        at afterConnectMultiple (node:net:2154:16) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[error] GET /api/tasks?pageSize=100 TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=1&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=2&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?pageSize=100 TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=1&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=2&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=3&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=4&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=1&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=2&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=1&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=2&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=1&pageSize=10&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=1&pageSize=10&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=1&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18
+[error] GET /api/tasks?page=1&pageSize=10&sort=created_at&order=desc TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    at Module.listTasks (file:///C:/Users/PC/Desktop/TaskPulse/server/services/task.service.js:57:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/PC/Desktop/TaskPulse/server/controllers/task.controller.js:5:18

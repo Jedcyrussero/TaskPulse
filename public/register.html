@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Create your TaskPulse account.">
+  <title>Create account · TaskPulse</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+  <main class="auth-wrap">
+    <div class="card auth-card">
+      <div class="auth-head">
+        <div class="brand-mark" aria-hidden="true">⚡</div>
+        <h1>Create your account</h1>
+        <p>Start organising your work in under a minute.</p>
+      </div>
+
+      <div id="form-alert" class="alert"></div>
+
+      <form id="auth-form" data-mode="register" novalidate>
+        <div class="field">
+          <label for="displayName">Name</label>
+          <input type="text" id="displayName" name="displayName"
+                 autocomplete="name" placeholder="Alex Morgan" required autofocus>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email"
+                 placeholder="you@example.com" required>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password"
+                 autocomplete="new-password" placeholder="At least 8 characters" required>
+          <div class="field-hint">Use 8 or more characters.</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="city">City <span style="color:var(--text-dim);font-weight:400">(optional)</span></label>
+            <input type="text" id="city" name="city" placeholder="Lisbon" autocomplete="address-level2">
+          </div>
+          <div class="field">
+            <label for="country">Country <span style="color:var(--text-dim);font-weight:400">(optional)</span></label>
+            <input type="text" id="country" name="country" placeholder="PT" autocomplete="country">
+          </div>
+        </div>
+
+        <div class="field-hint" style="margin:-6px 0 16px">
+          Adding a city powers the local weather widget on your dashboard.
+        </div>
+
+        <button class="btn btn-primary btn-block" type="submit" id="submit-btn">Create account</button>
+      </form>
+
+      <p class="auth-foot">
+        Already have an account? <a href="/login.html">Sign in</a>
+      </p>
+    </div>
+  </main>
+
+  <script type="module" src="/js/auth-forms.js"></script>
+</body>
+</html>
