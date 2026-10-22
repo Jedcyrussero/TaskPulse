@@ -58,4 +58,6 @@ export const taskIdSchema = z.object({
 export const weatherQuerySchema = z.object({
   // Optional: when omitted the controller falls back to the user's profile city.
   city: z.string().trim().min(1).max(120).optional(),
+  // Optional ISO code or country name used to disambiguate the city.
+  country: z.string().trim().min(1).max(60).optional(),
 });

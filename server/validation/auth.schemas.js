@@ -38,7 +38,8 @@ export const loginSchema = z.object({
 
 export const updateProfileSchema = z
   .object({
-    displayName,
+    // Every field is optional so a caller can update just one (e.g. only city).
+    displayName: displayName.optional(),
     city,
     country,
   })

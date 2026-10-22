@@ -44,6 +44,7 @@ const env = {
 
   weather: {
     apiKey: (process.env.WEATHER_API_KEY || '').trim(),
+    provider: (process.env.WEATHER_PROVIDER || '').trim().toLowerCase(),
     baseUrl: process.env.WEATHER_BASE_URL || 'https://api.openweathermap.org/data/2.5',
     units: process.env.WEATHER_UNITS || 'metric',
     lang: process.env.WEATHER_LANG || 'en',

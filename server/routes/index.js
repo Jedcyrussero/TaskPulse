@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import asyncHandler from '../utils/asyncHandler.js';
 import validate from '../middleware/validate.js';
-import requireAuth from '../middleware/auth.js';
+import requireAuth, { requireAdmin } from '../middleware/auth.js';
 import rateLimit from 'express-rate-limit';
 import * as authController from '../controllers/auth.controller.js';
 import * as taskController from '../controllers/task.controller.js';
 import * as dashboardController from '../controllers/dashboard.controller.js';
 import * as weatherController from '../controllers/weather.controller.js';
+import * as adminController from '../controllers/admin.controller.js';
 import {
   registerSchema,
   loginSchema,
@@ -19,6 +20,11 @@ import {
   taskIdSchema,
   weatherQuerySchema,
 } from '../validation/task.schemas.js';
+import {
+  listUsersSchema,
+  userIdSchema,
+  updateRoleSchema,
+} from '../validation/admin.schemas.js';
 import { query } from '../db/pool.js';
 
 const router = Router();
@@ -59,7 +65,14 @@ router.post('/tasks/:id/toggle', requireAuth, validate(taskIdSchema, 'params'), 
 // --- Dashboard --------------------------------------------------------------
 router.get('/dashboard/summary', requireAuth, dashboardController.summary);
 
-// --- Weather (OpenWeatherMap) ----------------------------------------------
+// --- Weather (OpenWeatherMap or built-in static provider) -------------------
 router.get('/weather', requireAuth, validate(weatherQuerySchema, 'query'), weatherController.current);
+
+// --- Admin (requires role='admin'; regular users get 403) -------------------
+router.get('/admin/stats', requireAuth, requireAdmin, adminController.stats);
+router.get('/admin/users', requireAuth, requireAdmin, validate(listUsersSchema, 'query'), adminController.listUsers);
+router.get('/admin/users/:id', requireAuth, requireAdmin, validate(userIdSchema, 'params'), adminController.getUser);
+router.patch('/admin/users/:id/role', requireAuth, requireAdmin, validate(userIdSchema, 'params'), validate(updateRoleSchema), adminController.updateRole);
+router.delete('/admin/users/:id', requireAuth, requireAdmin, validate(userIdSchema, 'params'), adminController.removeUser);
 
 export default router;

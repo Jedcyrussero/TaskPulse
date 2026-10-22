@@ -161,5 +161,81 @@ await test('missing optional fields do not break mapping', async () => {
   assert.equal(w.country, null);
 });
 
+await test('appends an ISO country code to the query', async () => {
+  const calls = stubFetch(samplePayload());
+  await getCurrentWeather('Porto', 'PT');
+  const url = new URL(calls[0]);
+  assert.equal(url.searchParams.get('q'), 'Porto,PT');
+});
+
+await test('normalises a country name to its ISO code', async () => {
+  const calls = stubFetch(samplePayload());
+  await getCurrentWeather('Lisbon', 'Portugal');
+  assert.equal(new URL(calls[0]).searchParams.get('q'), 'Lisbon,PT');
+});
+
+await test('normalises a full ISO alpha-3 code', async () => {
+  const calls = stubFetch(samplePayload());
+  await getCurrentWeather('Washington', 'USA');
+  assert.equal(new URL(calls[0]).searchParams.get('q'), 'Washington,US');
+});
+
+await test('leaves a query that already includes a country untouched', async () => {
+  const calls = stubFetch(samplePayload());
+  await getCurrentWeather('Austin,TX', 'US');
+  assert.equal(new URL(calls[0]).searchParams.get('q'), 'Austin,TX');
+});
+
+await test('falls back to a bare city when the country is unrecognised', async () => {
+  const calls = stubFetch(samplePayload());
+  await getCurrentWeather('Nowhereville', 'Atlantis');
+  assert.equal(new URL(calls[0]).searchParams.get('q'), 'Nowhereville');
+});
+
+// --- Static provider --------------------------------------------------------
+
+const { getStaticWeather } = await import('../server/services/weather.static.js');
+
+await test('static provider returns the client shape', () => {
+  const w = getStaticWeather('Manila', 'PH');
+  assert.equal(w.available, true);
+  assert.equal(w.source, 'static');
+  assert.equal(w.location, 'Manila');
+  assert.equal(w.country, 'PH');
+  assert.equal(w.units, 'metric');
+  assert.equal(typeof w.temperature, 'number');
+  assert.equal(typeof w.humidity, 'number');
+  assert.match(w.observedAt, /^\d{4}-\d{2}-\d{2}T/);
+});
+
+await test('static provider is deterministic for a given city', () => {
+  const a = getStaticWeather('Cebu', 'PH');
+  const b = getStaticWeather('Cebu', 'PH');
+  assert.equal(a.temperature, b.temperature);
+  assert.equal(a.humidity, b.humidity);
+  assert.equal(a.code, b.code);
+});
+
+await test('static provider knows Philippine cities', () => {
+  for (const city of ['Manila', 'Cebu', 'Davao', 'Baguio']) {
+    const w = getStaticWeather(city, 'PH');
+    assert.equal(w.country, 'PH', `${city} country`);
+    assert.ok(w.temperature > 0, `${city} has a temperature`);
+  }
+});
+
+await test('static provider honours imperial units', () => {
+  const metric = getStaticWeather('Manila', 'PH', { units: 'metric' });
+  const imperial = getStaticWeather('Manila', 'PH', { units: 'imperial' });
+  assert.equal(imperial.units, 'imperial');
+  assert.ok(imperial.temperature > metric.temperature, 'F is numerically higher than C');
+});
+
+await test('static provider parses a City,CC query', () => {
+  const w = getStaticWeather('Lisbon,PT');
+  assert.equal(w.location, 'Lisbon');
+  assert.equal(w.country, 'PT');
+});
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);

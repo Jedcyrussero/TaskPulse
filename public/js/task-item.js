@@ -16,6 +16,11 @@ export function renderTask(task, { onToggle, onEdit, onDelete } = {}) {
     checkbox.disabled = true;
     try {
       const { task: updated } = await TaskApi.toggle(task.id);
+      li.classList.toggle('done', updated.status === 'done');
+      if (updated.status === 'done') {
+        li.classList.add('just-completed');
+        setTimeout(() => li.classList.remove('just-completed'), 600);
+      }
       onToggle ? onToggle(updated) : applyTaskState(li, updated);
     } catch (err) {
       checkbox.checked = !checkbox.checked; // revert on failure
@@ -47,16 +52,19 @@ export function renderTask(task, { onToggle, onEdit, onDelete } = {}) {
 
   const actions = el('div', { class: 'task-actions' },
     el('button', {
-      class: 'btn btn-sm',
+      class: 'btn btn-sm btn-icon',
       type: 'button',
+      title: 'Edit task',
+      'aria-label': `Edit "${task.title}"`,
       onclick: () => onEdit?.(task),
-    }, 'Edit'),
+    }, '✎'),
     el('button', {
-      class: 'btn btn-sm btn-danger',
+      class: 'btn btn-sm btn-danger btn-icon',
       type: 'button',
+      title: 'Delete task',
       'aria-label': `Delete "${task.title}"`,
       onclick: () => onDelete?.(task),
-    }, '✕'),
+    }, '🗑'),
   );
 
   li.append(checkbox, main, actions);

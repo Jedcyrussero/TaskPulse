@@ -2,11 +2,11 @@ import { pool } from '../db/pool.js';
 import ApiError from '../utils/ApiError.js';
 import { hashPassword, createRefreshToken, hashToken } from '../utils/auth.js';
 
-const PUBLIC_COLUMNS = 'id, email, display_name, city, country, created_at, updated_at';
+const PUBLIC_COLUMNS = 'id, email, display_name, city, country, role, created_at, updated_at';
 
 export async function findUserByEmail(email) {
   const { rows } = await pool.query(
-    'SELECT id, email, display_name, city, country, password_hash, created_at FROM users WHERE email = $1',
+    'SELECT id, email, display_name, city, country, role, password_hash, created_at FROM users WHERE email = $1',
     [email],
   );
   return rows[0] || null;

@@ -45,6 +45,65 @@ export function clearAlert(container) {
   container.textContent = '';
 }
 
+// --- Confirm dialog ---------------------------------------------------------
+
+/**
+ * Promise-based confirmation modal. Returns true when confirmed, false when
+ * dismissed. Replaces the native window.confirm so destructive actions match
+ * the app's visual language.
+ */
+export function confirmDialog({
+  title = 'Are you sure?',
+  message = '',
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
+  danger = false,
+} = {}) {
+  return new Promise((resolve) => {
+    let settled = false;
+
+    const finish = (value) => {
+      if (settled) return;
+      settled = true;
+      document.removeEventListener('keydown', onKey);
+      backdrop.classList.remove('open');
+      // Let the exit animation play before detaching.
+      backdrop.addEventListener('transitionend', () => backdrop.remove(), { once: true });
+      setTimeout(() => backdrop.remove(), 300);
+      resolve(value);
+    };
+
+    const onKey = (event) => {
+      if (event.key === 'Escape') finish(false);
+      if (event.key === 'Enter') finish(true);
+    };
+
+    const backdrop = el('div', { class: 'modal-backdrop confirm-backdrop', role: 'dialog', 'aria-modal': 'true' });
+    const dialog = el('div', { class: 'modal confirm-modal' },
+      el('div', { class: 'modal-head' },
+        el('h2', {}, title),
+        el('button', { class: 'icon-btn', type: 'button', 'aria-label': 'Close', onclick: () => finish(false) }, '✕')),
+      el('div', { class: 'modal-body' },
+        el('p', { class: 'confirm-message' }, message)),
+      el('div', { class: 'modal-foot' },
+        el('button', { class: 'btn', type: 'button', onclick: () => finish(false) }, cancelLabel),
+        el('button', {
+          class: `btn ${danger ? 'btn-danger-solid' : 'btn-primary'}`,
+          type: 'button',
+          onclick: () => finish(true),
+        }, confirmLabel)),
+    );
+
+    backdrop.append(dialog);
+    backdrop.addEventListener('click', (event) => { if (event.target === backdrop) finish(false); });
+    document.addEventListener('keydown', onKey);
+    document.body.append(backdrop);
+    // Next frame so the entrance transition runs.
+    requestAnimationFrame(() => backdrop.classList.add('open'));
+    dialog.querySelector('.btn-danger-solid, .btn-primary')?.focus();
+  });
+}
+
 // --- Toasts -----------------------------------------------------------------
 
 function toastHost() {

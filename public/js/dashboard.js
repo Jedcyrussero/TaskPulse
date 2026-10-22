@@ -161,30 +161,48 @@ function renderActivity(activity) {
 
 // --- Weather ----------------------------------------------------------------
 
-async function loadWeather() {
+async function loadWeather(cityOverride) {
   const host = $('#weather');
+  const where = cityOverride || user?.city;
   host.replaceChildren(
-    el('div', { class: 'inline-loading' }, el('span', { class: 'spinner' }), 'Loading weather...'),
+    el('div', { class: 'inline-loading' },
+      el('span', { class: 'spinner' }),
+      where ? `Loading weather for ${where}...` : 'Loading weather...'),
   );
 
   try {
-    const weather = await WeatherApi.current();
+    const weather = await WeatherApi.current(cityOverride);
 
     if (!weather.available) {
+      const noKey = /WEATHER_API_KEY/.test(weather.reason ?? '');
       host.className = 'card';
       host.replaceChildren(
         el('div', { class: 'card-body' },
           el('div', { class: 'weather-unavailable' },
-            el('span', { style: 'font-size:1.5rem' }, '🌤️'),
-            el('div', {},
-              el('div', { style: 'font-weight:600;color:var(--text)' }, 'Weather unavailable'),
-              el('div', { class: 'field-hint' }, 'Add WEATHER_API_KEY to your .env to enable local conditions.'),
-              el('button', {
-                class: 'btn btn-sm',
-                style: 'margin-top:10px',
-                type: 'button',
-                onclick: () => setCity(),
-              }, 'Set your city')))),
+            el('span', { style: 'font-size:1.5rem' }, noKey ? '🔑' : '🌤️'),
+            el('div', { style: 'flex:1;min-width:0' },
+              el('div', { style: 'font-weight:600;color:var(--text)' },
+                noKey ? 'Weather needs an API key' : 'Weather unavailable'),
+              el('div', { class: 'field-hint' },
+                noKey
+                  ? 'The server has no OpenWeatherMap key configured yet.'
+                  : (weather.reason ?? 'No conditions available right now.')),
+              noKey
+                ? el('details', { class: 'weather-setup' },
+                    el('summary', {}, 'How to enable it'),
+                    el('ol', {},
+                      el('li', {}, 'Create a free key at ',
+                        el('a', { href: 'https://home.openweathermap.org/api_keys', target: '_blank', rel: 'noopener' }, 'openweathermap.org'),
+                        ' (new keys can take 10–60 min to activate).'),
+                      el('li', {}, 'Add it to ', el('code', {}, '.env'), ' as ', el('code', {}, 'WEATHER_API_KEY=your_key')),
+                      el('li', {}, 'Restart the server.')))
+                : null),
+            el('button', {
+              class: 'btn btn-sm',
+              style: 'margin-left:auto;flex:none;align-self:flex-start',
+              type: 'button',
+              onclick: () => setCity(),
+            }, 'Set your city'))),
       );
       return;
     }
@@ -203,7 +221,11 @@ async function loadWeather() {
               el('div', {},
                 el('div', { class: 'weather-loc' },
                   `${weather.location}${weather.country ? `, ${weather.country}` : ''}`),
-                el('div', { class: 'weather-desc' }, weather.description))),
+                el('div', { class: 'weather-desc' },
+                  weather.description,
+                  weather.source === 'static'
+                    ? el('span', { class: 'weather-tag', title: 'Built-in sample data — set WEATHER_API_KEY for live weather' }, 'sample')
+                    : null))),
             el('div', { class: 'weather-facts' },
               weather.feelsLike !== null
                 ? el('span', { class: 'weather-fact' }, 'Feels like ', el('b', {}, `${weather.feelsLike}${unit}`))
@@ -213,6 +235,10 @@ async function loadWeather() {
                 : null,
               weather.windSpeed !== null
                 ? el('span', { class: 'weather-fact' }, 'Wind ', el('b', {}, `${weather.windSpeed} ${windUnit}`))
+                : null,
+              weather.minTemp !== null && weather.maxTemp !== null
+                ? el('span', { class: 'weather-fact' }, 'H ', el('b', {}, `${weather.maxTemp}${unit}`),
+                    ' / L ', el('b', {}, `${weather.minTemp}${unit}`))
                 : null)),
           el('button', {
             class: 'btn btn-sm',
@@ -233,18 +259,80 @@ async function loadWeather() {
   }
 }
 
-async function setCity(defaultCity = '') {
-  const city = window.prompt('City for local weather:', defaultCity || user.city || '');
-  if (!city || !city.trim()) return;
+/**
+ * Inline city/country editor rendered inside the weather card, so setting a
+ * location no longer depends on two browser prompt() boxes.
+ */
+function setCity(defaultCity = '') {
+  const host = $('#weather');
+  const cityInput = el('input', {
+    type: 'text',
+    name: 'city',
+    placeholder: 'City, e.g. Manila',
+    value: defaultCity || user.city || '',
+    'aria-label': 'City',
+  });
+  const countryInput = el('input', {
+    type: 'text',
+    name: 'country',
+    placeholder: 'Country, e.g. PH or Philippines',
+    value: user.country || '',
+    'aria-label': 'Country (optional)',
+  });
+  const error = el('div', { class: 'field-feedback' });
 
-  try {
-    await AuthApi.updateProfile({ city: city.trim() });
-    user.city = city.trim();
-    toast(`Weather location set to ${city.trim()}`);
-    loadWeather();
-  } catch (err) {
-    toast(err.message, 'error');
-  }
+  const form = el('form', { class: 'weather-form' },
+    el('div', { class: 'field-row' },
+      el('div', { class: 'field' }, el('label', {}, 'City'), cityInput),
+      el('div', { class: 'field' }, el('label', {}, 'Country'), countryInput)),
+    error,
+    el('div', { class: 'weather-form-actions' },
+      el('button', {
+        class: 'btn btn-sm', type: 'button',
+        onclick: () => loadWeather(),
+      }, 'Cancel'),
+      el('button', { class: 'btn btn-sm btn-primary', type: 'submit' }, 'Save location')),
+  );
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const city = cityInput.value.trim();
+    if (!city) {
+      error.textContent = 'Enter a city name.';
+      error.classList.add('show');
+      cityInput.classList.add('invalid');
+      cityInput.focus();
+      return;
+    }
+
+    const submit = form.querySelector('button[type="submit"]');
+    submit.disabled = true;
+    submit.classList.add('loading');
+
+    const payload = { city };
+    const country = countryInput.value.trim();
+    if (country) payload.country = country;
+
+    try {
+      await AuthApi.updateProfile(payload);
+      user.city = payload.city;
+      user.country = payload.country ?? user.country;
+      toast(`Weather location set to ${payload.city}${payload.country ? `, ${payload.country}` : ''}`);
+      loadWeather();
+    } catch (err) {
+      error.textContent = err.message;
+      error.classList.add('show');
+      submit.disabled = false;
+      submit.classList.remove('loading');
+    }
+  });
+
+  host.className = 'card';
+  host.replaceChildren(
+    el('div', { class: 'card-head' }, el('h2', {}, 'Weather location')),
+    el('div', { class: 'card-body' }, form),
+  );
+  cityInput.focus();
 }
 
 init();

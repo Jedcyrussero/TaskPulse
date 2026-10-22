@@ -74,13 +74,14 @@ export const updateProfile = asyncHandler(async (req, res) => {
 });
 
 function toPublic(user) {
-  const { id, email, display_name, city, country, created_at, updated_at } = user;
+  const { id, email, display_name, city, country, role, created_at, updated_at } = user;
   return {
     id,
     email,
     displayName: display_name,
     city,
     country,
+    role: role || 'user',
     createdAt: created_at,
     updatedAt: updated_at,
   };

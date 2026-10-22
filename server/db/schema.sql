@@ -12,9 +12,26 @@ CREATE TABLE IF NOT EXISTS users (
   display_name  TEXT NOT NULL,
   city          TEXT,
   country       TEXT,
+  role          TEXT NOT NULL DEFAULT 'user'
+                  CHECK (role IN ('user', 'admin')),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Backfill for databases created before the role column existed.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'user';
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'users_role_check'
+  ) THEN
+    ALTER TABLE users
+      ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'admin'));
+  END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_users_role ON users (role);
 
 CREATE TABLE IF NOT EXISTS refresh_tokens (
   id         BIGSERIAL PRIMARY KEY,

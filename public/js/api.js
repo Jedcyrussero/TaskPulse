@@ -129,5 +129,6 @@ export const DashboardApi = {
 };
 
 export const WeatherApi = {
-  current: (city) => api.get('/weather', city ? { city } : undefined),
+  current: (city, country) =>
+    api.get('/weather', city ? { city, ...(country ? { country } : {}) } : undefined),
 };

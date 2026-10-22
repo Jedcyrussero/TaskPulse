@@ -9,6 +9,12 @@ import { hashPassword } from '../utils/auth.js';
 
 const DEMO_EMAIL = 'demo@taskpulse.app';
 const DEMO_PASSWORD = 'demo1234';
+const DEMO_ROLE = 'admin';
+
+// A plain account so the 403 path (regular user hitting /api/admin/*) is easy
+// to demonstrate and test without touching the admin login.
+const USER_EMAIL = 'user@taskpulse.app';
+const USER_PASSWORD = 'user1234';
 
 const TASKS = [
   { title: 'Review Q3 product roadmap', priority: 'urgent', status: 'in_progress', dueInDays: 1 },
@@ -35,14 +41,15 @@ try {
   const passwordHash = await hashPassword(DEMO_PASSWORD);
 
   const { rows } = await pool.query(
-    `INSERT INTO users (email, password_hash, display_name, city, country)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO users (email, password_hash, display_name, city, country, role)
+     VALUES ($1, $2, $3, $4, $5, $6)
      ON CONFLICT (email) DO UPDATE
        SET password_hash = EXCLUDED.password_hash,
            city = EXCLUDED.city,
-           country = EXCLUDED.country
+           country = EXCLUDED.country,
+           role = EXCLUDED.role
      RETURNING id`,
-    [DEMO_EMAIL, passwordHash, 'Demo User', 'Lisbon', 'PT'],
+    [DEMO_EMAIL, passwordHash, 'Demo User', 'Manila', 'Philippines', DEMO_ROLE],
   );
   const userId = rows[0].id;
 
@@ -67,7 +74,19 @@ try {
     );
   }
 
-  console.log(`[seed] demo user ready: ${DEMO_EMAIL} / ${DEMO_PASSWORD}`);
+  // Plain (non-admin) account for exercising the 403 path.
+  const userHash = await hashPassword(USER_PASSWORD);
+  await pool.query(
+    `INSERT INTO users (email, password_hash, display_name, city, country, role)
+     VALUES ($1, $2, $3, $4, $5, 'user')
+     ON CONFLICT (email) DO UPDATE
+       SET password_hash = EXCLUDED.password_hash,
+           role = 'user'`,
+    [USER_EMAIL, userHash, 'Regular User', 'Cebu', 'Philippines'],
+  );
+
+  console.log(`[seed] demo user ready:  ${DEMO_EMAIL} / ${DEMO_PASSWORD}  (role: ${DEMO_ROLE})`);
+  console.log(`[seed] regular user:     ${USER_EMAIL} / ${USER_PASSWORD}  (role: user)`);
   console.log(`[seed] inserted ${TASKS.length} tasks.`);
 } catch (err) {
   console.error('[seed] failed:', err.message);

@@ -1,7 +1,7 @@
 /** Tasks page: filterable, sortable, paginated list with a create/edit modal. */
 import { TaskApi } from './api.js';
 import { requireSession } from './auth.js';
-import { $, el, toast, showAlert, clearAlert } from './ui.js';
+import { $, el, toast, showAlert, clearAlert, confirmDialog } from './ui.js';
 import { renderTask, emptyState } from './task-item.js';
 
 const state = {
@@ -69,13 +69,21 @@ function render(items, pagination) {
         hasFilters() ? 'Try clearing a filter or two.' : 'Create your first task with the button above.',
       ),
     );
+    // Re-trigger the empty-state entrance each render.
+    listEl.querySelector('.empty')?.classList.add('animate-in');
   } else {
     listEl.replaceChildren(
-      ...items.map((task) => renderTask(task, {
-        onToggle: () => loadTasks(),
-        onEdit: openEdit,
-        onDelete: confirmDelete,
-      })),
+      ...items.map((task, index) => {
+        const row = renderTask(task, {
+          onToggle: () => loadTasks(),
+          onEdit: openEdit,
+          onDelete: confirmDelete,
+        });
+        // Stagger the entrance so rows cascade in rather than appearing at once.
+        row.style.setProperty('--stagger', `${Math.min(index, 12) * 45}ms`);
+        row.classList.add('task-enter');
+        return row;
+      }),
     );
   }
 
@@ -95,7 +103,18 @@ function hasFilters() {
 }
 
 async function confirmDelete(task) {
-  if (!window.confirm(`Delete "${task.title}"? This cannot be undone.`)) return;
+  const ok = await confirmDialog({
+    title: 'Delete task',
+    message: `Delete "${task.title}"? This cannot be undone.`,
+    confirmLabel: 'Delete',
+    danger: true,
+  });
+  if (!ok) return;
+
+  // Animate the row out before the list re-renders.
+  const row = listEl.querySelector(`[data-id="${task.id}"]`);
+  row?.classList.add('removing');
+
   try {
     await TaskApi.remove(task.id);
     toast('Task deleted');
@@ -104,8 +123,10 @@ async function confirmDelete(task) {
         && (state.page - 1) * state.pageSize >= state.pagination.total - 1) {
       state.page -= 1;
     }
+    if (row) await new Promise((r) => setTimeout(r, 220));
     loadTasks();
   } catch (err) {
+    row?.classList.remove('removing');
     toast(err.message, 'error');
   }
 }

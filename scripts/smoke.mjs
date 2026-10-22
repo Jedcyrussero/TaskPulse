@@ -120,5 +120,63 @@ await check('registration rejects duplicate-free invalid email', '/auth/register
   expect: [400],
 });
 
+// --- Admin RBAC -------------------------------------------------------------
+// Roles are read from the database, so a valid token for a NON-admin user must
+// be rejected with 403 while the same token type is accepted for an admin.
+
+// Register a throwaway account: it is guaranteed to have the default 'user'
+// role, so its real access token exercises the genuine 403 path.
+let userToken = null;
+try {
+  const res = await fetch(`${BASE}/api/auth/register`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      email: `smoke+${Date.now()}@test.local`,
+      password: 'smoke-test-1234',
+      displayName: 'Smoke RBAC',
+    }),
+  });
+  if (res.ok) userToken = (await res.json()).accessToken;
+} catch { /* fall through: assertions below degrade to the ghost-token case */ }
+
+// A token for an id that cannot exist must not leak whether it exists.
+const ghostToken = jwt.sign(
+  { sub: '999999', email: 'ghost@test.local', name: 'Ghost', typ: 'access' },
+  secret,
+  { issuer: 'taskpulse', expiresIn: '5m' },
+);
+
+await check('admin route requires authentication', '/admin/stats', {
+  auth: false,
+  expect: [401],
+});
+await check('unknown user id is rejected (no existence leak)', '/admin/stats', {
+  auth: false, rawToken: ghostToken, expect: [401],
+});
+
+if (userToken) {
+  await check('regular user gets 403 on admin stats', '/admin/stats', {
+    auth: false, rawToken: userToken, expect: [403],
+  });
+  await check('regular user gets 403 on admin user list', '/admin/users', {
+    auth: false, rawToken: userToken, expect: [403],
+  });
+  await check('regular user gets 403 on role change', '/admin/users/1/role', {
+    method: 'PATCH', body: { role: 'admin' }, auth: false, rawToken: userToken, expect: [403],
+  });
+  await check('regular user gets 403 on user delete', '/admin/users/1', {
+    method: 'DELETE', auth: false, rawToken: userToken, expect: [403],
+  });
+} else {
+  console.log('SKIP  regular-user 403 checks (registration unavailable)');
+}
+
+if (process.env.ADMIN_TOKEN) {
+  await check('admin can read stats', '/admin/stats', {
+    auth: false, rawToken: process.env.ADMIN_TOKEN, expect: [200],
+  });
+}
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);

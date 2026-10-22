@@ -336,10 +336,40 @@ select {
 .weather-temp sup { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); vertical-align: super; }
 .weather-loc { font-weight: 650; }
 .weather-desc { font-size: 0.86rem; color: var(--text-muted); text-transform: capitalize; }
+.weather-tag {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 7px;
+  font-size: 0.68rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--info); background: var(--info-soft);
+  border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 999px;
+  vertical-align: middle;
+}
 .weather-facts { display: flex; gap: 18px; margin-top: 8px; flex-wrap: wrap; }
 .weather-fact { font-size: 0.8rem; color: var(--text-muted); }
 .weather-fact b { color: var(--text); font-weight: 600; }
 .weather-unavailable { color: var(--text-muted); font-size: 0.88rem; display: flex; align-items: center; gap: 10px; }
+
+/* Expandable setup instructions in the weather widget. */
+.weather-setup { margin-top: 10px; font-size: 0.82rem; }
+.weather-setup summary {
+  cursor: pointer; color: var(--primary); font-weight: 600;
+  list-style: none; display: inline-flex; align-items: center; gap: 5px;
+}
+.weather-setup summary::-webkit-details-marker { display: none; }
+.weather-setup summary::before { content: "▸"; transition: transform var(--dur-fast) ease; }
+.weather-setup[open] summary::before { transform: rotate(90deg); }
+.weather-setup ol { margin: 8px 0 0; padding-left: 18px; color: var(--text-muted); line-height: 1.7; }
+.weather-setup code {
+  font-family: var(--font-mono); font-size: 0.9em;
+  background: var(--bg-elevated); padding: 1px 5px; border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+/* Inline weather location editor. */
+.weather-form .field { margin-bottom: 12px; }
+.weather-form .field-row { gap: 10px; }
+.weather-form-actions { display: flex; justify-content: flex-end; gap: 8px; }
 
 /* --- Progress bar --------------------------------------------------------- */
 
@@ -468,3 +498,310 @@ select {
   .page { padding: 22px 14px 64px; }
   .user-chip span.name { display: none; }
 }
+
+/* ==========================================================================
+   Motion system
+   ========================================================================== */
+
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 0.16s;
+  --dur: 0.28s;
+  --dur-slow: 0.5s;
+}
+
+/* Respect users who prefer reduced motion: disable everything decorative. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- Ambient background --------------------------------------------------- */
+
+body::before {
+  content: "";
+  position: fixed; inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(420px 420px at 20% 30%, rgba(91, 140, 255, 0.10), transparent 65%),
+    radial-gradient(380px 380px at 80% 15%, rgba(167, 139, 250, 0.10), transparent 65%),
+    radial-gradient(460px 460px at 60% 90%, rgba(56, 189, 248, 0.07), transparent 65%);
+  animation: drift 26s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(2%, -2%, 0) scale(1.05); }
+  100% { transform: translate3d(-2%, 2%, 0) scale(1.02); }
+}
+
+/* --- Entrance animations -------------------------------------------------- */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Generic opt-in entrance. */
+.animate-in { animation: fade-up var(--dur) var(--ease-out) both; }
+
+/* Stagger util: children fade up in sequence. */
+.stagger > * { animation: fade-up var(--dur) var(--ease-out) both; }
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 45ms; }
+.stagger > *:nth-child(3) { animation-delay: 90ms; }
+.stagger > *:nth-child(4) { animation-delay: 135ms; }
+.stagger > *:nth-child(5) { animation-delay: 180ms; }
+.stagger > *:nth-child(6) { animation-delay: 225ms; }
+.stagger > *:nth-child(7) { animation-delay: 270ms; }
+.stagger > *:nth-child(8) { animation-delay: 315ms; }
+.stagger > *:nth-child(n+9) { animation-delay: 360ms; }
+
+/* --- Page + card entrances ------------------------------------------------ */
+
+.page, .auth-wrap { animation: fade-in var(--dur) var(--ease-out) both; }
+.page-head { animation: fade-up var(--dur) var(--ease-out) both; }
+.card {
+  animation: fade-up var(--dur) var(--ease-out) both;
+  transition: border-color var(--dur) ease, transform var(--dur) var(--ease-out),
+              box-shadow var(--dur) ease;
+}
+.card:hover { border-color: #33406b; }
+
+/* Cards laid out in a grid cascade in. */
+.grid-stats > .stat { animation: fade-up var(--dur) var(--ease-out) both; }
+.grid-stats > .stat:nth-child(1) { animation-delay: 40ms; }
+.grid-stats > .stat:nth-child(2) { animation-delay: 90ms; }
+.grid-stats > .stat:nth-child(3) { animation-delay: 140ms; }
+.grid-stats > .stat:nth-child(4) { animation-delay: 190ms; }
+.grid-stats > .stat:nth-child(5) { animation-delay: 240ms; }
+
+.stat {
+  transition: transform var(--dur) var(--ease-out), border-color var(--dur) ease,
+              box-shadow var(--dur) ease;
+}
+.stat:hover {
+  transform: translateY(-3px);
+  border-color: #33406b;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.7);
+}
+.stat::after { transition: opacity var(--dur) ease; }
+.stat:hover::after { opacity: 0.7; }
+
+.stat-value { display: inline-block; }
+.grid-stats > .stat:hover .stat-value { animation: count-pop 0.4s var(--ease-spring); }
+@keyframes count-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+/* --- Task rows ------------------------------------------------------------ */
+
+.task { position: relative; transition: background var(--dur-fast), transform var(--dur-fast) var(--ease-out); }
+.task:hover { transform: translateX(2px); }
+
+/* Newly rendered rows cascade in. */
+.task-enter {
+  animation: task-in 0.4s var(--ease-out) both;
+  animation-delay: var(--stagger, 0ms);
+}
+@keyframes task-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.99); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Row leaving the DOM after a delete. */
+.task.removing {
+  animation: task-out 0.22s ease forwards;
+  pointer-events: none;
+}
+@keyframes task-out {
+  to { opacity: 0; transform: translateX(24px) scale(0.97); max-height: 0; padding-top: 0; padding-bottom: 0; }
+}
+
+/* Flash when a task is checked off. */
+.task.just-completed { animation: complete-flash 0.6s var(--ease-out); }
+@keyframes complete-flash {
+  0%   { background: var(--success-soft); }
+  100% { background: transparent; }
+}
+
+.task-check { transition: background var(--dur-fast), border-color var(--dur-fast), transform var(--dur-fast) var(--ease-spring); }
+.task-check:active { transform: scale(0.85); }
+.task-check:checked { animation: check-pop 0.32s var(--ease-spring); }
+@keyframes check-pop {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+.task-check:checked::after { animation: check-draw 0.24s ease both; }
+@keyframes check-draw {
+  from { opacity: 0; transform: rotate(45deg) translate(-1px, -1px) scale(0.4); }
+  to   { opacity: 1; transform: rotate(45deg) translate(-1px, -1px) scale(1); }
+}
+
+/* Action buttons: slide in on hover. */
+.task-actions { opacity: 0.55; transition: opacity var(--dur-fast); }
+.task:hover .task-actions, .task:focus-within .task-actions { opacity: 1; }
+.btn-icon { padding: 6px 9px; font-size: 0.9rem; line-height: 1; }
+
+/* --- Badges --------------------------------------------------------------- */
+
+.badge { transition: transform var(--dur-fast) var(--ease-spring), background var(--dur-fast); }
+.task:hover .badge { transform: translateY(-1px); }
+
+/* --- Buttons -------------------------------------------------------------- */
+
+.btn { transition: background var(--dur-fast), border-color var(--dur-fast),
+                   transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-fast), opacity var(--dur-fast); }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 8px 18px -10px rgba(0, 0, 0, 0.8); }
+.btn:active { transform: translateY(0) scale(0.98); }
+.btn-primary:hover { box-shadow: 0 10px 24px -10px var(--primary); }
+
+/* Ripple-ish sheen on primary buttons. */
+.btn-primary { position: relative; overflow: hidden; }
+.btn-primary::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.25), transparent 70%);
+  transform: translateX(-120%);
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.btn-primary:hover::after { transform: translateX(120%); }
+
+/* Loading state for the submit button. */
+.btn.loading { position: relative; color: transparent; }
+.btn.loading::before {
+  content: ""; position: absolute; top: 50%; left: 50%;
+  width: 16px; height: 16px; margin: -8px 0 0 -8px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.btn-danger-solid { background: var(--danger); border-color: var(--danger); color: #20060a; }
+.btn-danger-solid:hover { background: #fca5a5; border-color: #fca5a5; }
+
+/* --- Inputs --------------------------------------------------------------- */
+
+input, select, textarea { transition: border-color var(--dur-fast), box-shadow var(--dur-fast), background var(--dur-fast); }
+.field { position: relative; animation: fade-up var(--dur) var(--ease-out) both; }
+.field-row { animation: fade-up var(--dur) var(--ease-out) both; }
+
+input.invalid, select.invalid, textarea.invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-soft);
+  animation: shake 0.32s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+.field-feedback {
+  max-height: 0; opacity: 0; overflow: hidden;
+  font-size: 0.8rem; color: #fca5a5;
+  transition: max-height var(--dur) var(--ease-out), opacity var(--dur), margin var(--dur);
+}
+.field-feedback.show { max-height: 40px; opacity: 1; margin-top: 5px; }
+
+/* Password reveal button. */
+.input-affix { position: relative; }
+.input-affix input { padding-right: 44px; }
+.affix-btn {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  background: none; border: none; border-radius: 6px;
+  color: var(--text-dim); cursor: pointer; font-size: 0.95rem;
+  transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
+}
+.affix-btn:hover { background: var(--surface-2); color: var(--text); }
+.affix-btn:active { transform: translateY(-50%) scale(0.9); }
+.affix-btn.on { color: var(--primary); }
+
+/* Password strength meter. */
+.strength {
+  display: flex; gap: 4px; margin-top: 7px;
+  opacity: 0; max-height: 0;
+  transition: opacity var(--dur), max-height var(--dur);
+}
+.strength.show { opacity: 1; max-height: 10px; }
+.strength-bar {
+  flex: 1; height: 4px; border-radius: 999px; background: var(--border);
+  transition: background var(--dur) ease;
+}
+
+/* --- Alerts --------------------------------------------------------------- */
+
+.alert.show { animation: alert-in 0.3s var(--ease-out) both; }
+@keyframes alert-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- Modal ---------------------------------------------------------------- */
+
+.modal-backdrop {
+  opacity: 0;
+  transition: opacity var(--dur) ease, backdrop-filter var(--dur) ease;
+}
+.modal-backdrop.open { opacity: 1; }
+.modal { animation: modal-in 0.34s var(--ease-spring) both; }
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.94) translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+.modal-backdrop.confirm-backdrop { display: flex; }
+.confirm-modal { max-width: 420px; }
+.confirm-message { color: var(--text-muted); font-size: 0.92rem; }
+
+/* --- Toasts --------------------------------------------------------------- */
+
+#toast-host > div { animation: toast-in 0.32s var(--ease-spring) both; }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(30px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- Chart ---------------------------------------------------------------- */
+
+.chart-bar { transition: height 0.6s var(--ease-out), opacity var(--dur-fast), filter var(--dur-fast); animation: bar-rise 0.6s var(--ease-out) both; }
+@keyframes bar-rise { from { height: 0; } }
+.chart-col:hover .chart-bar { filter: brightness(1.15); }
+
+/* --- Progress ------------------------------------------------------------- */
+
+.progress-fill { transition: width 0.7s var(--ease-out); }
+
+/* --- Weather -------------------------------------------------------------- */
+
+.weather-icon { animation: float 4.5s ease-in-out infinite; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.spinner { animation: spin 0.7s linear infinite; }
+.empty { animation: fade-up 0.4s var(--ease-out) both; }
+.empty-icon { animation: float 4.5s ease-in-out infinite; }
+
+/* --- Nav + avatar --------------------------------------------------------- */
+
+.nav a { position: relative; transition: background var(--dur-fast), color var(--dur-fast); }
+.avatar { transition: transform var(--dur) var(--ease-spring); }
+.user-chip:hover .avatar { transform: scale(1.08) rotate(-4deg); }
+.brand-mark { transition: transform var(--dur) var(--ease-spring), box-shadow var(--dur); }
+.brand:hover .brand-mark { transform: rotate(-8deg) scale(1.08); box-shadow: 0 8px 22px -6px var(--primary); }
+
+/* Auth card subtle lift. */
+.auth-card { animation: fade-up 0.45s var(--ease-out) both; }
+.auth-head .brand-mark { animation: fade-up 0.5s var(--ease-out) both; }
